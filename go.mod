@@ -15,7 +15,11 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.4-0.20181223182923-24fa6976df40 // indirect
 	github.com/spf13/viper v1.3.2
-	github.com/vishvananda v0.0.0-00010101000000-000000000000
+	github.com/vishvananda/netlink v0.0.0-00010101000000-000000000000
+	github.com/vishvananda/netns v0.0.0-00010101000000-000000000000
 )
 
-replace github.com/vishvananda => ./pkg/vishvananda
+replace (
+	github.com/vishvananda/netlink => ./pkg/vishvananda/netlink
+	github.com/vishvananda/netns => ./pkg/vishvananda/netns
+)
