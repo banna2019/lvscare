@@ -1,6 +1,6 @@
-[![Build Status](https://cloud.drone.io/api/badges/fanux/LVScare/status.svg)](https://cloud.drone.io/fanux/LVScare)
+[![Build Status](https://cloud.drone.io/api/badges/fanux/lvscare/status.svg)](https://cloud.drone.io/fanux/lvscare)
 
-# LVScare
+# lvscare
 A lightweight LVS baby care, support ipvs health check
 
 ## Feature
