@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/fanux/lvscare/pkg/ipvs"
 	"net"
 	"strconv"
 	"syscall"
@@ -33,9 +34,9 @@ type Lvser interface {
 type lvscare struct {
 	vs           EndPoint
 	rs           []EndPoint
-	service      *Service
-	destinations []*Destination
-	handle       *Handle
+	service      *ipvs.Service
+	destinations []*ipvs.Destination
+	handle       *ipvs.Handle
 }
 
 func (l *lvscare) CreateInterface(name string, CIRD string) error {
@@ -82,12 +83,12 @@ func (l *lvscare) AddRealServer(ip, port string) error {
 		return fmt.Errorf("service is nil: %s", err)
 	}
 
-	d := Destination{
+	d := ipvs.Destination{
 		AddressFamily:   nl.FAMILY_V4,
 		Address:         net.ParseIP(ip),
 		Port:            uint16(p),
 		Weight:          1,
-		ConnectionFlags: ConnectionFlagMasq,
+		ConnectionFlags: ipvs.ConnectionFlagMasq,
 	}
 
 	err = l.handle.NewDestination(l.service, &d)
@@ -154,12 +155,12 @@ func (l *lvscare) RemoveRealServer(ip, port string) error {
 		return fmt.Errorf("service is nil: %s", err)
 	}
 
-	d := &Destination{
+	d := &ipvs.Destination{
 		AddressFamily:   nl.FAMILY_V4,
 		Address:         net.ParseIP(ip),
 		Port:            uint16(p),
 		Weight:          1,
-		ConnectionFlags: ConnectionFlagMasq,
+		ConnectionFlags: ipvs.ConnectionFlagMasq,
 	}
 
 	l.handle.DelDestination(l.service, d)
@@ -214,16 +215,16 @@ func BuildLvscare(vs string, rs []string) (Lvser, error) {
 		return nil, fmt.Errorf("port is %s : %s", l.vs.Port, err)
 	}
 
-	l.service = &Service{
+	l.service = &ipvs.Service{
 		AddressFamily: nl.FAMILY_V4,
-		SchedName:     RoundRobin,
+		SchedName:     ipvs.RoundRobin,
 		Protocol:      syscall.IPPROTO_TCP,
 		Port:          uint16(p),
 		Address:       net.ParseIP(l.vs.IP),
 		Netmask:       0xFFFFFFFF,
 	}
 
-	handle, err := New("")
+	handle, err := ipvs.New("")
 	if err != nil {
 		return nil, fmt.Errorf("New ipvs handle failed: %s", err)
 	}
@@ -241,12 +242,12 @@ func BuildLvscare(vs string, rs []string) (Lvser, error) {
 		}
 
 		l.rs = append(l.rs, EndPoint{IP: i, Port: p})
-		l.destinations = append(l.destinations, &Destination{
+		l.destinations = append(l.destinations, &ipvs.Destination{
 			AddressFamily:   nl.FAMILY_V4,
 			Address:         net.ParseIP(i),
 			Port:            uint16(iport),
 			Weight:          1,
-			ConnectionFlags: ConnectionFlagMasq,
+			ConnectionFlags: ipvs.ConnectionFlagMasq,
 		})
 	}
 

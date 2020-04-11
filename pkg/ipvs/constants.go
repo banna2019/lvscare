@@ -1,4 +1,4 @@
-package service
+package ipvs
 
 const (
 	genlCtrlID = 0x10
