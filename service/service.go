@@ -107,7 +107,6 @@ func (l *lvscare) GetVirtualServer() (vs *EndPoint, rs *[]EndPoint) {
 	}
 
 	for _, svc := range svcArray {
-		fmt.Printf("check svc ip: %s, port %v\n", svc.Address.String(), svc.Port)
 		if svc.Address.String() == l.service.Address.String() && svc.Port == l.service.Port {
 			return &l.vs, &l.rs
 		}
@@ -124,7 +123,6 @@ func (l *lvscare) GetRealServer(ip, port string) (rs *EndPoint, weight int) {
 	dip := net.ParseIP(ip)
 	p, err := strconv.Atoi(port)
 	if err != nil {
-		fmt.Printf("port is %s : %s", port, err)
 		return nil, 0
 	}
 	dport := uint16(p)
@@ -136,7 +134,6 @@ func (l *lvscare) GetRealServer(ip, port string) (rs *EndPoint, weight int) {
 	}
 
 	for _, dst := range dstArray {
-		fmt.Printf("check realserver ip: %s, port %s\n", dst.Address.String(), dst.Port)
 		if dst.Address.Equal(dip) && dst.Port == dport {
 			return &EndPoint{IP: ip, Port: port}, dst.Weight
 		}
@@ -183,7 +180,6 @@ func (l *lvscare) CheckRealServers(path, schem string) {
 			rs, weight := l.GetRealServer(realServer.IP, realServer.Port)
 			if weight == 0 {
 				err := l.RemoveRealServer(realServer.IP, realServer.Port)
-				fmt.Println("remove weight = 0 real server")
 				if err != nil {
 					fmt.Println("	Error remove weight = 0 real server failed", realServer.IP, realServer.Port)
 				}
